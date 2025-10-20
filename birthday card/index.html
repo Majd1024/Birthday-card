@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3D Birthday Card</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #fdbf00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1400px;
+    font-family: "Poppins", sans-serif;
+    overflow: hidden;
+  }
+
+  .card {
+    width: 600px;
+    height: 500px;
+    position: relative;
+    transform-style: preserve-3d;
+  }
+
+.outside {
+  width: 56%;
+  height: 109%;
+  background: white;
+  position: absolute;
+  left: 1; /* 👈 change this to move the front half horizontally */
+  transform-style: preserve-3d;
+  transform-origin: left; /* 👈 or try changing to 'right' if you want it to fold differently */
+  transition: transform 1.5s ease;
+  border-radius: 8px 0 0 8px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transform: rotateY(0deg); /* ✅ leave this as-is for closed position */
+  z-index: 2;
+}
+
+  .outside.open {
+    transform: rotateY(-140deg); /* ✅ opens correctly */
+    z-index: 1;
+  }
+
+  .front,
+  .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px 0 0 8px;
+  }
+
+  .front {
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .front h1 {
+    font-size: 1.6rem;
+    color: #18184a;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+  }
+
+  .cake-image {
+    width: 160px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .back {
+    background: white;
+    transform: rotateY(180deg);
+  }
+
+  /* RIGHT HALF (Inside message) */
+  .inside {
+    width: 50%;
+    height: 100%;
+    background: white;
+    position: absolute;
+    right: 0;
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    z-index: 0;
+  }
+
+  .message {
+    font-size: clamp(1.8rem, 2vw + 1rem, 2.4rem);
+    color: #ff7a00;
+    text-shadow: 0 0 15px #ff7a00;
+    animation: glow 3s infinite alternate;
+    line-height: 1.8;
+  }
+
+  @keyframes glow {
+    0% {
+      text-shadow: 0 0 15px #ff7a00, 0 0 25px #ff7a00, 0 0 35px #ff1493;
+    }
+    100% {
+      text-shadow: 0 0 15px #ff1493, 0 0 25px #ff1493, 0 0 35px #ff7a00;
+    }
+  }
+
+  /* CONFETTI */
+  .confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 14px;
+    opacity: 0.8;
+    animation: fall 3s linear forwards;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(100vh) rotateZ(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* 📱 Responsive */
+@media (max-width: 700px) {
+  .card {
+    width: 90%;
+    height: 300px;
+  }
+  .message {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+  }
+  .cake-image {
+    width: 130px;
+  }
+
+  /* 👇 Adjusts card proportions on smaller screens */
+  .outside {
+    height: 113%;
+    width: 54%;
+    left: 203px;
+  }
+
+  .front, .back {
+    width: 107%;
+  }
+}
+
+</style>
+</head>
+<body>
+  <div class="card">
+    <!-- Left Half -->
+    <div class="outside" id="outside">
+      <div class="front">
+        <h1>HAPPY <br> BIRTHDAY</h1>
+        <img src="image.png" alt="Cake" class="cake-image" />
+      </div>
+      <div class="back"></div>
+    </div>
+
+    <!-- Right Half -->
+    <div class="inside">
+      <div class="message">
+        كل عام وانتي  
+      <br> بالفف خير<br />
+        🥳🥳<br />
+        عقبال المية سنة<br />
+        إنشاءالله
+      </div>
+    </div>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    const outside = document.getElementById("outside");
+    const confettiContainer = document.getElementById("confetti");
+    let confettiShown = false;
+
+    outside.addEventListener("click", () => {
+      outside.classList.toggle("open");
+      if (!confettiShown && outside.classList.contains("open")) {
+        confettiShown = true;
+        createConfetti();
+      }
+    });
+
+    function createConfetti() {
+      for (let i = 0; i < 120; i++) {
+        const piece = document.createElement("div");
+        piece.classList.add("confetti-piece");
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        piece.style.animationDelay = Math.random() * 0.5 + "s";
+        piece.style.width = Math.random() * 8 + 4 + "px";
+        piece.style.height = Math.random() * 12 + 6 + "px";
+        confettiContainer.appendChild(piece);
+        setTimeout(() => piece.remove(), 4000);
+      }
+    }
+  </script>
+</body>
+</html>
