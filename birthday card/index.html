@@ -167,28 +167,30 @@
         }
       }
       @media (max-width: 1080px) {
-        body {
-          justify-content: flex-start; /* move card to the left */
-          align-items: center; /* keep it vertically centered */
-          padding-left: 60px; /* add a bit of breathing space */
-        }
+body {
+    justify-content: center;   /* 👈 center the card horizontally on phones */
+    align-items: center;       /* keep it vertically centered */
+    padding-left: 0;           /* remove any extra side spacing */
+  }
 
-        .card {
-          transform: scale(0.95); /* slightly smaller on mid screens */
-        }
+  .card {
+    width: 90%;
+    height: 320px;
+    transform: scale(0.95);
+  }
 
-        .outside {
-          width: 52%; /* keep overlap correct */
-        }
+  .outside {
+    width: 52%;                /* keep fold ratio correct */
+    left: 0;                   /* ensure front half aligns properly */
+  }
 
-        .front,
-        .back {
-          width: 104%; /* smooth edge alignment */
-        }
+  .front, .back {
+    width: 104%;
+  }
 
-        .message {
-          font-size: clamp(1.6rem, 1.8vw + 1rem, 2rem); /* responsive text */
-        }
+  .message {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+  }
       }
     </style>
   </head>
